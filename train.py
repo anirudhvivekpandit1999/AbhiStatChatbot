@@ -87,6 +87,12 @@ def main():
         {"text": "open data check", "intent": "go_to_results"},
         {"text": "show result", "intent": "go_to_results"},
         {"text": "take me to result page", "intent": "go_to_results"},
+        {"text": "i want to see the results", "intent": "go_to_results"},
+        {"text": "show me the result", "intent": "go_to_results"},
+        {"text": "open results page", "intent": "go_to_results"},
+        {"text": "open data check page", "intent": "go_to_results"},
+        {"text": "i want to go to the results page", "intent": "go_to_results"},
+
         
         {"text": "cancel", "intent": "cancel"},
         {"text": "go back", "intent": "cancel"},
