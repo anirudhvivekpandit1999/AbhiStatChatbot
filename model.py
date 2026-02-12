@@ -36,7 +36,7 @@ class Tokenizer:
     
     def encode(self, text: str) -> List[int]:
         tokens = self.tokenize_text(text)
-        return [self.word_to_idx.get(word, 3) for word in tokens]  # 3 is UNK token
+        return [self.word_to_idx.get(word, 3) for word in tokens]  
     
     def decode(self, indices: List[int]) -> str:
         words = [self.idx_to_word.get(idx, "<UNK>") for idx in indices]
@@ -183,7 +183,6 @@ class TransformerLLM:
         self.train_questions = []
         self.train_responses = []
         
-        # Intent recognition data
         self.intent_patterns = {}
         self.intent_responses = {
             "upload_file": "I'll help you upload a file. Please select your Excel spreadsheet.",
@@ -235,14 +234,12 @@ class TransformerLLM:
             score = matches / len(user_keywords) if matches > 0 else 0
             intent_scores[intent] = (score, matches)
 
-    # ✅ Keep only intents with STRONG evidence (2+ keyword hits)
         matching_intents = [
         (intent, score, matches)
         for intent, (score, matches) in intent_scores.items()
         if matches >= min_matches
     ]
 
-    # Sort by number of matches first, then confidence
         matching_intents.sort(key=lambda x: (x[2], x[1]), reverse=True)
 
         return matching_intents

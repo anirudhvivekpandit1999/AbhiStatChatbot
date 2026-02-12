@@ -1,3 +1,4 @@
+from email.mime import text
 import numpy as np
 import json
 import re
@@ -38,7 +39,7 @@ class Tokenizer:
     
     def encode(self, text: str) -> List[int]:
         tokens = self.tokenize_text(text)
-        return [self.word_to_idx.get(word, 3) for word in tokens]  # 3 is UNK token
+        return [self.word_to_idx.get(word, 3) for word in tokens]  
     
     def decode(self, indices: List[int]) -> str:
         words = [self.idx_to_word.get(idx, "<UNK>") for idx in indices]
@@ -170,6 +171,7 @@ class TransformerBlock:
 class TransformerLLM:
     def __init__(self, vocab_size: int = None, d_model: int = 64, num_heads: int = 4, 
                  num_layers: int = 2, max_seq_len: int = 50):
+
         self.d_model = d_model
         self.num_heads = num_heads
         self.num_layers = num_layers
@@ -186,12 +188,11 @@ class TransformerLLM:
         self.train_questions = []
         self.train_responses = []
         
-        # Intent recognition data
         self.intent_patterns = {}
         self.intent_responses = {
             "upload_file": "I'll help you upload a file. Please select your Excel spreadsheet.",
             "enter_preprocess": "Moving to preprocessing step. Let's prepare your data.",
-            "select_base_sheet": "Great! I've selected this sheet as the base. What would you like to do next?",
+            "select_base_sheet": "Great! I've selected this {sheet_name} as the base. What would you like to do next?",
             "name_new_sheet": "Please enter a name for your new sheet.",
             "set_row_range": "Select the row range you want to keep (start row - end row).",
             "select_x_axis": "Which column should be used for the X-axis?",
@@ -202,6 +203,47 @@ class TransformerLLM:
             "go_to_results": "Taking you to the results page to review your processed data.",
             "cancel": "Canceling operation. Going back to the previous step."
         }
+
+    def extract_entity(self, text: str, intent: str):
+        text_lower = text.lower()
+
+        patterns = {
+            "select_base_sheet": [
+                r"base sheet (?:to|as|is)\s+([a-zA-Z0-9_ -]+)",
+                r"use sheet\s+([a-zA-Z0-9_ -]+)",
+                r"set (?:this )?sheet (?:to|as)\s+([a-zA-Z0-9_ -]+)"
+            ],
+            "name_new_sheet": [
+                r"name (?:it|sheet)?\s+([a-zA-Z0-9_ -]+)",
+                r"call (?:it|sheet)?\s+([a-zA-Z0-9_ -]+)",
+                r"rename (?:it|sheet)?\s+([a-zA-Z0-9_ -]+)"
+            ],
+            "set_row_range": [
+                r"rows?\s*(\d+)\s*(?:to|-)\s*(\d+)",
+                r"from row\s*(\d+)\s*to\s*(\d+)"
+            ],
+            "select_x_axis": [
+                r"x axis (?:as|to|is)\s+([a-zA-Z0-9_ -]+)",
+                r"use ([a-zA-Z0-9_ -]+) for x"
+            ],
+            "select_y_axis": [
+                r"y axis (?:as|to|is)\s+([a-zA-Z0-9_ -]+)",
+                r"use ([a-zA-Z0-9_ -]+) for y"
+            ],
+        }
+
+        if intent not in patterns:
+            return None
+
+        for pattern in patterns[intent]:
+            match = re.search(pattern, text_lower)
+            if match:
+                if intent == "set_row_range" and len(match.groups()) == 2:
+                    return f"{match.group(1)}-{match.group(2)}"
+                return match.group(1).strip()
+
+        return None    
+    
     
     def load_intent_data(self, intent_data: List[Dict]):
         for item in intent_data:
@@ -379,7 +421,26 @@ class TransformerLLM:
     {"text": "never mind", "intent": "cancel"},
     {"text": "abort", "intent": "cancel"},
     {"text": "exit", "intent": "cancel"},
-    {"text": "cncel", "intent": "cancel"}
+    {"text": "cncel", "intent": "cancel"},
+    { "text": "create new excel", "intent": "create_new_excel" },
+  { "text": "create a new spreadsheet", "intent": "create_new_excel" },
+  { "text": "make a new excel file", "intent": "create_new_excel" },
+  { "text": "start a new sheet", "intent": "create_new_excel" },
+  { "text": "new excel sheet", "intent": "create_new_excel" },
+  { "text": "new spreadsheet", "intent": "create_new_excel" },
+  { "text": "add new excel", "intent": "create_new_excel" },
+  { "text": "start a new excel file", "intent": "create_new_excel" },
+  { "text": "open a new sheet", "intent": "create_new_excel" },
+  { "text": "create excel", "intent": "create_new_excel" },
+  { "text": "new file", "intent": "create_new_excel" },
+  { "text": "make new spreadsheet", "intent": "create_new_excel" },
+  { "text": "create new xlsx", "intent": "create_new_excel" },
+  { "text": "new xlsx file", "intent": "create_new_excel" },
+  
+  { "text": "creat new excel", "intent": "create_new_excel" },
+  { "text": "create nwe excel", "intent": "create_new_excel" },
+  { "text": "new exel sheet", "intent": "create_new_excel" },
+  { "text": "start nwe sheet", "intent": "create_new_excel" }
 ]
     
         self.load_intent_data(intent_training_data)
@@ -391,28 +452,30 @@ class TransformerLLM:
             score = matches / len(user_keywords) if matches > 0 else 0
             intent_scores[intent] = (score, matches)
 
-    # ✅ Keep only intents with STRONG evidence (2+ keyword hits)
         matching_intents = [
         (intent, score, matches)
         for intent, (score, matches) in intent_scores.items()
         if matches >= min_matches
     ]
 
-    # Sort by number of matches first, then confidence
         matching_intents.sort(key=lambda x: (x[2], x[1]), reverse=True)
 
         return matching_intents
     def generate_response(self, question: str, max_tokens: int = 15) -> str:
         if len(self.intent_patterns) > 0:
             matching_intents = self.classify_intent(question)
-            
+
             if matching_intents:
-                result = []
+                results = []
                 for intent, confidence, matches in matching_intents:
-                    result.append(f"{intent}|{confidence:.2f}")
-                
-                return ",".join(result)
-        
+                    entity = self.extract_entity(question, intent)
+                    if entity:
+                        results.append(f"{intent}|{confidence:.2f}|{entity}")
+                    else:
+                        results.append(f"{intent}|{confidence:.2f}")
+
+                return ",".join(results)
+
         return "unknown|0.00"
     
     def debug_classify(self, user_input: str):
@@ -427,7 +490,6 @@ class TransformerLLM:
         
         if intent_matches:
             print("  Detected intents (sorted by priority):")
-            # Sort by number of matches
             sorted_intents = sorted(intent_matches.items(), key=lambda x: len(x[1]), reverse=True)
             for intent, matches in sorted_intents:
                 print(f"    {intent}: {len(matches)} matches - {matches}")
@@ -721,7 +783,26 @@ def main():
     {"text": "never mind", "intent": "cancel"},
     {"text": "abort", "intent": "cancel"},
     {"text": "exit", "intent": "cancel"},
-    {"text": "cncel", "intent": "cancel"}
+    {"text": "cncel", "intent": "cancel"},
+    { "text": "create new excel", "intent": "create_new_excel" },
+  { "text": "create a new spreadsheet", "intent": "create_new_excel" },
+  { "text": "make a new excel file", "intent": "create_new_excel" },
+  { "text": "start a new sheet", "intent": "create_new_excel" },
+  { "text": "new excel sheet", "intent": "create_new_excel" },
+  { "text": "new spreadsheet", "intent": "create_new_excel" },
+  { "text": "add new excel", "intent": "create_new_excel" },
+  { "text": "start a new excel file", "intent": "create_new_excel" },
+  { "text": "open a new sheet", "intent": "create_new_excel" },
+  { "text": "create excel", "intent": "create_new_excel" },
+  { "text": "new file", "intent": "create_new_excel" },
+  { "text": "make new spreadsheet", "intent": "create_new_excel" },
+  { "text": "create new xlsx", "intent": "create_new_excel" },
+  { "text": "new xlsx file", "intent": "create_new_excel" },
+  
+  { "text": "creat new excel", "intent": "create_new_excel" },
+  { "text": "create nwe excel", "intent": "create_new_excel" },
+  { "text": "new exel sheet", "intent": "create_new_excel" },
+  { "text": "start nwe sheet", "intent": "create_new_excel" }
 ]
     
     chatbot.load_intent_data(intent_training_data)

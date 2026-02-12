@@ -1,4 +1,3 @@
-# train.py
 from model import TransformerLLM
 import json
 
@@ -155,7 +154,6 @@ def main():
 ]
     chatbot.load_intent_data(intent_training_data)
     
-    # small conversational training set (optional)
     training_data = [
         ("Hello", "Hi there! How can I help you today?"),
         ("How are you", "I'm doing great, thank you for asking!"),
@@ -172,7 +170,6 @@ def main():
     print("Training on general conversation data...")
     chatbot.train(epochs=10)
     
-    # Save to file
     chatbot.save_model("chatbot_model.pkl")
     print("Training & save complete. Model file: chatbot_model.pkl")
 

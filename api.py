@@ -1,4 +1,3 @@
-# api.py
 from ast import List
 from collections import defaultdict
 from typing import List
@@ -49,7 +48,7 @@ class Tokenizer:
     
     def encode(self, text: str) -> List[int]:
         tokens = self.tokenize_text(text)
-        return [self.word_to_idx.get(word, 3) for word in tokens]  # 3 is UNK token
+        return [self.word_to_idx.get(word, 3) for word in tokens]  
     
     def decode(self, indices: List[int]) -> str:
         words = [self.idx_to_word.get(idx, "<UNK>") for idx in indices]
@@ -137,7 +136,7 @@ def predict_intent():
 
     try:
         
-        matches = chatbot.classify_intent(text)  # list of (intent, score, matches)
+        matches = chatbot.classify_intent(text) 
         print(f"[DEBUG /predict-intent] Matches for '{text}':", matches)
 
         if not matches:
