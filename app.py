@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import re
+import random
 
 # -----------------------------
 # TOKENIZER
@@ -13,6 +14,11 @@ class Tokenizer:
         self.idx_to_word = {0: "<PAD>", 1: "<UNK>"}
         self.vocab_size = 2
 
+    def clean(self, text):
+        text = text.lower()
+        text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
+        return text
+
     def fit(self, texts):
         for text in texts:
             words = self.clean(text).split()
@@ -22,17 +28,12 @@ class Tokenizer:
                     self.idx_to_word[self.vocab_size] = word
                     self.vocab_size += 1
 
-    def encode(self, text, max_len=20):
+    def encode(self, text, max_len=40):
         words = self.clean(text).split()
         tokens = [self.word_to_idx.get(w, 1) for w in words]
         tokens = tokens[:max_len]
         tokens += [0] * (max_len - len(tokens))
         return tokens
-
-    def clean(self, text):
-        text = text.lower()
-        text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
-        return text
 
 
 # -----------------------------
@@ -48,10 +49,11 @@ class TransformerIntentModel(nn.Module):
             d_model=embed_dim,
             nhead=num_heads,
             dim_feedforward=hidden_dim,
-            batch_first=True
+            batch_first=True,
+            dropout=0.1
         )
 
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=2)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=3)
         self.fc = nn.Linear(embed_dim, num_classes)
 
     def forward(self, x):
@@ -63,18 +65,48 @@ class TransformerIntentModel(nn.Module):
 
 
 # -----------------------------
-# TRAINING DATA
+# INTENT DATA (EXPANDED)
 # -----------------------------
 intent_data = [
-    ("upload file", ["upload_file"]),
-    ("upload excel", ["upload_file"]),
+
+    # Single intents
+    ("upload excel file", ["upload_file"]),
+    ("upload a csv file", ["upload_file"]),
+    ("please upload the file", ["upload_file"]),
+
     ("create new sheet", ["create_new_sheet"]),
-    ("make a new sheet", ["create_new_sheet"]),
-    ("rename sheet", ["set_pre_sheet_name"]),
-    ("set sheet name", ["set_pre_sheet_name"]),
-    ("set base sheet", ["set_base_sheet"]),
+    ("make a sheet", ["create_new_sheet"]),
+    ("add another sheet", ["create_new_sheet"]),
+
+    ("name the new sheet sales data", ["name_new_sheet"]),
+    ("rename the sheet", ["name_new_sheet"]),
+    ("call the new sheet report", ["name_new_sheet"]),
+
+    ("set this as base sheet", ["set_base_sheet"]),
+    ("make this the base sheet", ["set_base_sheet"]),
+    ("select this sheet as base", ["set_base_sheet"]),
+
+    ("set preprocessing sheet name", ["set_pre_sheet_name"]),
+    ("set pre sheet name cleaned data", ["set_pre_sheet_name"]),
+    ("define preprocessing sheet name", ["set_pre_sheet_name"]),
+
+    # ✅ NEW INTENT — Post Sheet Name
+    ("set postprocessing sheet name", ["set_post_sheet_name"]),
+    ("set post sheet name final output", ["set_post_sheet_name"]),
+    ("define postprocessing sheet name", ["set_post_sheet_name"]),
+
+    # Multi-intent combinations (IMPORTANT)
     ("upload file and create new sheet", ["upload_file", "create_new_sheet"]),
-    ("upload and rename sheet", ["upload_file", "set_pre_sheet_name"]),
+    ("create and name new sheet", ["create_new_sheet", "name_new_sheet"]),
+    ("upload file create sheet name sheet", ["upload_file", "create_new_sheet", "name_new_sheet"]),
+    ("upload file create new sheet name new sheet set base sheet", 
+        ["upload_file", "create_new_sheet", "name_new_sheet", "set_base_sheet"]),
+    ("upload file create new sheet name new sheet set base sheet set pre sheet name", 
+        ["upload_file", "create_new_sheet", "name_new_sheet", "set_base_sheet", "set_pre_sheet_name"]),
+
+    # ✅ Updated Full Combination Including Post Sheet
+    ("upload file create new sheet name new sheet set base sheet set pre sheet name set post sheet name",
+        ["upload_file", "create_new_sheet", "name_new_sheet", "set_base_sheet", "set_pre_sheet_name", "set_post_sheet_name"]),
 ]
 
 all_intents = sorted(list(set(intent for _, intents in intent_data for intent in intents)))
@@ -106,9 +138,9 @@ Y = torch.tensor(Y, dtype=torch.float32)
 # -----------------------------
 model = TransformerIntentModel(
     vocab_size=tokenizer.vocab_size,
-    embed_dim=64,
+    embed_dim=128,
     num_heads=4,
-    hidden_dim=128,
+    hidden_dim=256,
     num_classes=len(all_intents)
 )
 
@@ -116,7 +148,9 @@ criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 print("Training model...")
-for epoch in range(300):
+
+for epoch in range(800):
+    model.train()
     optimizer.zero_grad()
     outputs = model(X)
     loss = criterion(outputs, Y)
@@ -125,11 +159,10 @@ for epoch in range(300):
 
 print("Training complete!\n")
 
-
 # -----------------------------
 # MULTI-INTENT PREDICTION
 # -----------------------------
-def predict_intents(text, threshold=0.5):
+def predict_intents(text, threshold=0.4):
     model.eval()
     tokens = torch.tensor([tokenizer.encode(text)])
 
@@ -138,6 +171,7 @@ def predict_intents(text, threshold=0.5):
         probs = torch.sigmoid(outputs)[0]
 
     detected = []
+
     for i, prob in enumerate(probs):
         if prob.item() >= threshold:
             detected.append((idx_to_intent[i], round(prob.item(), 4)))

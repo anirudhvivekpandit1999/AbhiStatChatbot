@@ -1,177 +1,94 @@
-from model import TransformerLLM
-import json
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
 
-def main():
-    chatbot = TransformerLLM(d_model=64, num_heads=4, num_layers=2, max_seq_len=50)
-    
-    
-    intent_training_data = [
-    {"text": "upload file", "intent": "upload_file"},
-    {"text": "upload", "intent": "upload_file"},
-    {"text": "upload excel", "intent": "upload_file"},
-    {"text": "upload xlsx", "intent": "upload_file"},
-    {"text": "upload csv", "intent": "upload_file"},
-    {"text": "upload an excel file", "intent": "upload_file"},
-    {"text": "open my spreadsheet", "intent": "upload_file"},
-    {"text": "choose a file to upload", "intent": "upload_file"},
-    {"text": "load excel file", "intent": "upload_file"},
-    {"text": "browse and upload", "intent": "upload_file"},
-    {"text": "add a file", "intent": "upload_file"},
-    {"text": "import data from file", "intent": "upload_file"},
-    {"text": "open this file", "intent": "upload_file"},
-    {"text": "drag and drop file", "intent": "upload_file"},
-    {"text": "pick a file", "intent": "upload_file"},
-    {"text": "select file from system", "intent": "upload_file"},
-    {"text": "bring my file here", "intent": "upload_file"},
-    {"text": "uplod file", "intent": "upload_file"},
-    {"text": "uplod excel", "intent": "upload_file"},
-    {"text": "upoad file", "intent": "upload_file"},
+from model import SimpleTokenizer, TransformerIntentClassifier, MAX_LEN
 
-    {"text": "next", "intent": "enter_preprocess"},
-    {"text": "next step", "intent": "enter_preprocess"},
-    {"text": "go to next step", "intent": "enter_preprocess"},
-    {"text": "continue", "intent": "enter_preprocess"},
-    {"text": "go ahead", "intent": "enter_preprocess"},
-    {"text": "move ahead", "intent": "enter_preprocess"},
-    {"text": "proceed", "intent": "enter_preprocess"},
-    {"text": "open preprocessing", "intent": "enter_preprocess"},
-    {"text": "go to preprocessing", "intent": "enter_preprocess"},
-    {"text": "start preprocessing", "intent": "enter_preprocess"},
-    {"text": "create new sheet", "intent": "enter_preprocess"},
-    {"text": "preprocess data", "intent": "enter_preprocess"},
-    {"text": "prep data", "intent": "enter_preprocess"},
-    {"text": "pre process", "intent": "enter_preprocess"},
+MODEL_PATH = "intent_model.pth"
 
-    {"text": "select base sheet", "intent": "select_base_sheet"},
-    {"text": "choose the base sheet", "intent": "select_base_sheet"},
-    {"text": "use this sheet as base", "intent": "select_base_sheet"},
-    {"text": "pick this sheet", "intent": "select_base_sheet"},
-    {"text": "set this as the base sheet", "intent": "select_base_sheet"},
-    {"text": "i want to use this sheet", "intent": "select_base_sheet"},
-    {"text": "this is the sheet i want to use", "intent": "select_base_sheet"},
-    {"text": "select this as base", "intent": "select_base_sheet"},
-    {"text": "make this the base sheet", "intent": "select_base_sheet"},
-    {"text": "base sheet is this", "intent": "select_base_sheet"},
-    {"text": "base shet", "intent": "select_base_sheet"},
-    {"text": "bse sheet", "intent": "select_base_sheet"},
+intent_data = [
 
-    {"text": "name the new sheet", "intent": "name_new_sheet"},
-    {"text": "set a name for the sheet", "intent": "name_new_sheet"},
-    {"text": "call this sheet something else", "intent": "name_new_sheet"},
-    {"text": "rename the new sheet", "intent": "name_new_sheet"},
-    {"text": "give the sheet a name", "intent": "name_new_sheet"},
-    {"text": "enter sheet name", "intent": "name_new_sheet"},
-    {"text": "change sheet name", "intent": "name_new_sheet"},
-    {"text": "sheet name", "intent": "name_new_sheet"},
-    {"text": "nam sheet", "intent": "name_new_sheet"},
+    # Single intents
+    ("upload excel file", ["upload_file"]),
+    ("upload a csv file", ["upload_file"]),
+    ("please upload the file", ["upload_file"]),
 
-    {"text": "select row range", "intent": "set_row_range"},
-    {"text": "trim rows", "intent": "set_row_range"},
-    {"text": "filter rows by range", "intent": "set_row_range"},
-    {"text": "select rows from start to end", "intent": "set_row_range"},
-    {"text": "choose row range", "intent": "set_row_range"},
-    {"text": "slice rows", "intent": "set_row_range"},
-    {"text": "cut rows", "intent": "set_row_range"},
-    {"text": "row range", "intent": "set_row_range"},
-    {"text": "rows from to", "intent": "set_row_range"},
-    {"text": "row rng", "intent": "set_row_range"},
+    ("create new sheet", ["create_new_sheet"]),
+    ("make a sheet", ["create_new_sheet"]),
+    ("add another sheet", ["create_new_sheet"]),
 
-    {"text": "select x axis", "intent": "select_x_axis"},
-    {"text": "choose x axis", "intent": "select_x_axis"},
-    {"text": "use this for x axis", "intent": "select_x_axis"},
-    {"text": "set x axis column", "intent": "select_x_axis"},
-    {"text": "x axis", "intent": "select_x_axis"},
-    {"text": "xaxis", "intent": "select_x_axis"},
-    {"text": "select x", "intent": "select_x_axis"},
-    {"text": "x axix", "intent": "select_x_axis"},
+    ("name the new sheet sales data", ["name_new_sheet"]),
+    ("rename the sheet", ["name_new_sheet"]),
+    ("call the new sheet report", ["name_new_sheet"]),
 
-    {"text": "select y axis", "intent": "select_y_axis"},
-    {"text": "choose y axis", "intent": "select_y_axis"},
-    {"text": "use this for y axis", "intent": "select_y_axis"},
-    {"text": "set y axis column", "intent": "select_y_axis"},
-    {"text": "y axis", "intent": "select_y_axis"},
-    {"text": "yaxis", "intent": "select_y_axis"},
-    {"text": "select y", "intent": "select_y_axis"},
-    {"text": "y axix", "intent": "select_y_axis"},
+    ("set this as base sheet", ["set_base_sheet"]),
+    ("make this the base sheet", ["set_base_sheet"]),
+    ("select this sheet as base", ["set_base_sheet"]),
 
-    {"text": "open column builder", "intent": "open_column_builder"},
-    {"text": "open formula builder", "intent": "open_column_builder"},
-    {"text": "add a calculated column", "intent": "open_column_builder"},
-    {"text": "create a formula column", "intent": "open_column_builder"},
-    {"text": "column builder", "intent": "open_column_builder"},
-    {"text": "formula editor", "intent": "open_column_builder"},
-    {"text": "column bulder", "intent": "open_column_builder"},
+    ("set preprocessing sheet name", ["set_pre_sheet_name"]),
+    ("set pre sheet name cleaned data", ["set_pre_sheet_name"]),
+    ("define preprocessing sheet name", ["set_pre_sheet_name"]),
 
-    {"text": "add formula column", "intent": "add_formula_column"},
-    {"text": "create a new calculated column", "intent": "add_formula_column"},
-    {"text": "add a new derived column", "intent": "add_formula_column"},
-    {"text": "add formula", "intent": "add_formula_column"},
-    {"text": "apply formula", "intent": "add_formula_column"},
-    {"text": "add calculated column", "intent": "add_formula_column"},
-    {"text": "formula column", "intent": "add_formula_column"},
-    {"text": "formla column", "intent": "add_formula_column"},
+    # ✅ NEW INTENT — Post Sheet Name
+    ("set postprocessing sheet name", ["set_post_sheet_name"]),
+    ("set post sheet name final output", ["set_post_sheet_name"]),
+    ("define postprocessing sheet name", ["set_post_sheet_name"]),
 
-    {"text": "submit sheet", "intent": "submit_sheet"},
-    {"text": "save this sheet", "intent": "submit_sheet"},
-    {"text": "finish sheet creation", "intent": "submit_sheet"},
-    {"text": "complete this step", "intent": "submit_sheet"},
-    {"text": "submit", "intent": "submit_sheet"},
-    {"text": "done", "intent": "submit_sheet"},
-    {"text": "save and continue", "intent": "submit_sheet"},
-    {"text": "finalize sheet", "intent": "submit_sheet"},
-    {"text": "submt sheet", "intent": "submit_sheet"},
+    # Multi-intent combinations (IMPORTANT)
+    ("upload file and create new sheet", ["upload_file", "create_new_sheet"]),
+    ("create and name new sheet", ["create_new_sheet", "name_new_sheet"]),
+    ("upload file create sheet name sheet", ["upload_file", "create_new_sheet", "name_new_sheet"]),
+    ("upload file create new sheet name new sheet set base sheet", 
+        ["upload_file", "create_new_sheet", "name_new_sheet", "set_base_sheet"]),
+    ("upload file create new sheet name new sheet set base sheet set pre sheet name", 
+        ["upload_file", "create_new_sheet", "name_new_sheet", "set_base_sheet", "set_pre_sheet_name"]),
 
-    {"text": "result", "intent": "go_to_results"},
-    {"text": "results", "intent": "go_to_results"},
-    {"text": "show result", "intent": "go_to_results"},
-    {"text": "show results", "intent": "go_to_results"},
-    {"text": "open result", "intent": "go_to_results"},
-    {"text": "open results", "intent": "go_to_results"},
-    {"text": "go to result", "intent": "go_to_results"},
-    {"text": "go to results", "intent": "go_to_results"},
-    {"text": "take me to results page", "intent": "go_to_results"},
-    {"text": "see result", "intent": "go_to_results"},
-    {"text": "see results", "intent": "go_to_results"},
-    {"text": "view result", "intent": "go_to_results"},
-    {"text": "view results", "intent": "go_to_results"},
-    {"text": "output", "intent": "go_to_results"},
-    {"text": "outputs", "intent": "go_to_results"},
-    {"text": "analysis result", "intent": "go_to_results"},
-    {"text": "analysis results", "intent": "go_to_results"},
-    {"text": "reslt", "intent": "go_to_results"},
-    {"text": "reslts", "intent": "go_to_results"},
-    {"text": "rsults", "intent": "go_to_results"},
-
-    {"text": "cancel", "intent": "cancel"},
-    {"text": "go back", "intent": "cancel"},
-    {"text": "stop this", "intent": "cancel"},
-    {"text": "undo", "intent": "cancel"},
-    {"text": "cancel this", "intent": "cancel"},
-    {"text": "never mind", "intent": "cancel"},
-    {"text": "abort", "intent": "cancel"},
-    {"text": "exit", "intent": "cancel"},
-    {"text": "cncel", "intent": "cancel"}
+    # ✅ Updated Full Combination Including Post Sheet
+    ("upload file create new sheet name new sheet set base sheet set pre sheet name set post sheet name",
+        ["upload_file", "create_new_sheet", "name_new_sheet", "set_base_sheet", "set_pre_sheet_name", "set_post_sheet_name"]),
 ]
-    chatbot.load_intent_data(intent_training_data)
-    
-    training_data = [
-        ("Hello", "Hi there! How can I help you today?"),
-        ("How are you", "I'm doing great, thank you for asking!"),
-        ("What is your name", "I'm a transformer based LLM chatbot built from scratch"),
-        ("What can you do", "I can answer questions and have conversations with you"),
-        ("Tell me a joke", "Why did the transformer go to school? To improve its attention!"),
-        ("Goodbye", "Goodbye! It was nice talking to you"),
-        ("Thanks", "You're welcome! Happy to help"),
-    ]
-    
-    for question, response in training_data:
-        chatbot.add_training_data(question, response)
-    
-    print("Training on general conversation data...")
-    chatbot.train(epochs=10)
-    
-    chatbot.save_model("chatbot_model.pkl")
-    print("Training & save complete. Model file: chatbot_model.pkl")
 
-if __name__ == "__main__":
-    main()
+all_intents = sorted(list(set(i for _, intents in intent_data for i in intents)))
+intent_to_idx = {intent: i for i, intent in enumerate(all_intents)}
+idx_to_intent = {i: intent for intent, i in intent_to_idx.items()}
+
+tokenizer = SimpleTokenizer()
+tokenizer.fit([text for text, _ in intent_data])
+
+X = []
+Y = []
+
+for text, intents in intent_data:
+    X.append(tokenizer.encode(text))
+    label = np.zeros(len(all_intents))
+    for intent in intents:
+        label[intent_to_idx[intent]] = 1
+    Y.append(label)
+
+X = torch.tensor(np.array(X))
+Y = torch.tensor(np.array(Y), dtype=torch.float32)
+
+model = TransformerIntentClassifier(tokenizer.vocab_size, len(all_intents))
+
+criterion = nn.BCEWithLogitsLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+print("Training model...")
+
+for epoch in range(600):
+    optimizer.zero_grad()
+    outputs = model(X)
+    loss = criterion(outputs, Y)
+    loss.backward()
+    optimizer.step()
+
+print("Training complete!")
+
+torch.save({
+    "model_state": model.state_dict(),
+    "tokenizer": tokenizer.word2idx,
+    "idx_to_intent": idx_to_intent
+}, MODEL_PATH)
+
+print("Model saved as intent_model.pth")
