@@ -10,14 +10,14 @@ app = Flask(__name__)
 CORS(app)
 
 MODEL_PATH = "intent_model.pth"
-
+MAX_LEN = 0
 model = None
 tokenizer = None
 idx_to_intent = None
 
 
 def load_model():
-    global model, tokenizer, idx_to_intent
+    global model, tokenizer, idx_to_intent, MAX_LEN
 
     if not os.path.exists(MODEL_PATH):
         print("Model file not found. Run train.py first.")
@@ -26,11 +26,13 @@ def load_model():
     checkpoint = torch.load(MODEL_PATH, map_location="cpu")
 
     tokenizer = SimpleTokenizer()
-    tokenizer.word2idx = checkpoint["tokenizer"]
-    tokenizer.idx2word = {v: k for k, v in tokenizer.word2idx.items()}
+    tokenizer.word2idx = checkpoint["word2idx"]
+    tokenizer.idx_to_word = {v: k for k, v in tokenizer.word2idx.items()}
     tokenizer.vocab_size = len(tokenizer.word2idx)
 
     idx_to_intent = checkpoint["idx_to_intent"]
+
+    MAX_LEN = checkpoint["max_len"]
 
     model = TransformerIntentClassifier(
         tokenizer.vocab_size,
@@ -43,7 +45,6 @@ def load_model():
     print("Model loaded.")
     return True
 
-
 @app.route("/")
 def health():
     return jsonify({"status": "running"})
@@ -55,14 +56,21 @@ def predict_intent():
     text = data.get("text", "")
 
     with torch.no_grad():
-        encoded = torch.tensor([tokenizer.encode(text, MAX_LEN)])
+        encoded = tokenizer.encode(text)
+
+        if len(encoded) < MAX_LEN:
+            encoded = encoded + [0] * (MAX_LEN - len(encoded))
+        else:
+            encoded = encoded[:MAX_LEN]
+
+        encoded = torch.tensor([encoded])
         logits = model(encoded)
         probs = torch.sigmoid(logits)[0]
 
     results = []
     for i, p in enumerate(probs):
-        if float(p) > 0.3:
-            results.append({
+        
+        results.append({
                 "intent": idx_to_intent[i],
                 "confidence": round(float(p), 4)
             })
