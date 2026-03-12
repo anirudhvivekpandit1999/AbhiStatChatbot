@@ -1194,7 +1194,621 @@ intent_data = [
 ("insert the final parenthesis", ["right_bracket"]),
 ("place the ending bracket", ["right_bracket"]),
 ("close the current bracket", ["right_bracket"]),
+# =====================================================
+# CLEAR COLUMN FORMULA INTENT
+# =====================================================
+
+("clear the column formula", ["clear_column_formula"]),
+("remove the formula from the column", ["clear_column_formula"]),
+("delete the column formula", ["clear_column_formula"]),
+("reset the column formula", ["clear_column_formula"]),
+("erase the column formula", ["clear_column_formula"]),
+("remove formula from this column", ["clear_column_formula"]),
+("clear formula from the selected column", ["clear_column_formula"]),
+("delete the formula in this column", ["clear_column_formula"]),
+("reset the formula in the column", ["clear_column_formula"]),
+("clear the current formula", ["clear_column_formula"]),
+
+# Column builder phrasing
+("clear the formula in column builder", ["clear_column_formula"]),
+("remove the formula from column builder", ["clear_column_formula"]),
+("reset the formula in column builder", ["clear_column_formula"]),
+("delete the formula from the column builder", ["clear_column_formula"]),
+("erase the formula inside column builder", ["clear_column_formula"]),
+
+# Natural instructions
+("remove the calculation from this column", ["clear_column_formula"]),
+("clear the calculation in the column", ["clear_column_formula"]),
+("delete the calculation from the column", ["clear_column_formula"]),
+("remove the expression from the column", ["clear_column_formula"]),
+("clear the expression from this column", ["clear_column_formula"]),
+("delete the expression from the column", ["clear_column_formula"]),
+
+# Formula editing language
+("clear the formula I wrote", ["clear_column_formula"]),
+("remove the formula I just added", ["clear_column_formula"]),
+("delete the current formula", ["clear_column_formula"]),
+("erase the current formula", ["clear_column_formula"]),
+("reset the current expression", ["clear_column_formula"]),
+
+# UI style phrasing
+("clear formula", ["clear_column_formula"]),
+("remove formula", ["clear_column_formula"]),
+("delete formula", ["clear_column_formula"]),
+("reset formula", ["clear_column_formula"]),
+("erase formula", ["clear_column_formula"]),
+
+# Workflow combinations
+("open column builder and clear the formula",
+ ["open_column_builder","clear_column_formula"]),
+
+("clear the column formula and start again",
+ ["clear_column_formula"]),
+
+("clear the formula and add a new one",
+ ["clear_column_formula"]),
+
+("upload file and clear the column formula",
+ ["upload_file","clear_column_formula"]),
+
+("open column builder and remove the formula from the column",
+ ["open_column_builder","clear_column_formula"]),
+
+# Full sentence instructions
+("please clear the formula from the column", ["clear_column_formula"]),
+("can you remove the formula from this column", ["clear_column_formula"]),
+("i want to delete the formula in this column", ["clear_column_formula"]),
+("remove the existing formula so I can write a new one", ["clear_column_formula"]),
+("reset the column formula so it becomes empty", ["clear_column_formula"]),
+("clear the formula but keep the column", ["clear_column_formula"]),
+("remove the formula not the column", ["clear_column_formula"]),
+# =====================================================
+# REMOVE LAST VARIABLE INTENT
+# =====================================================
+
+("remove the last variable", ["remove_last_variable"]),
+("delete the last variable", ["remove_last_variable"]),
+("remove the previous variable", ["remove_last_variable"]),
+("remove the last column variable", ["remove_last_variable"]),
+("delete the last column variable", ["remove_last_variable"]),
+("remove the last field from the formula", ["remove_last_variable"]),
+("delete the last field from the formula", ["remove_last_variable"]),
+("remove the last item in the formula", ["remove_last_variable"]),
+("remove the last element from the formula", ["remove_last_variable"]),
+("remove the last entry in the formula", ["remove_last_variable"]),
+
+# Builder style phrasing
+("remove the last variable from the column builder", ["remove_last_variable"]),
+("delete the last variable from column builder", ["remove_last_variable"]),
+("remove the last variable in the expression", ["remove_last_variable"]),
+("delete the last variable in the expression", ["remove_last_variable"]),
+("remove the last part of the formula", ["remove_last_variable"]),
+("delete the last part of the formula", ["remove_last_variable"]),
+
+# Natural phrasing
+("take out the last variable", ["remove_last_variable"]),
+("take out the last column from the formula", ["remove_last_variable"]),
+("remove the last thing I added", ["remove_last_variable"]),
+("delete the last thing I added to the formula", ["remove_last_variable"]),
+("remove the most recent variable", ["remove_last_variable"]),
+("delete the most recent variable", ["remove_last_variable"]),
+
+# Undo style
+("undo the last variable", ["remove_last_variable"]),
+("undo the last variable addition", ["remove_last_variable"]),
+("remove the variable I just added", ["remove_last_variable"]),
+("delete the variable I just inserted", ["remove_last_variable"]),
+("remove the column I just added to the formula", ["remove_last_variable"]),
+("delete the column I just added to the expression", ["remove_last_variable"]),
+
+# Formula editing
+("remove the last variable from this calculation", ["remove_last_variable"]),
+("delete the last variable from this calculation", ["remove_last_variable"]),
+("remove the last variable from the expression", ["remove_last_variable"]),
+("delete the last variable from the expression", ["remove_last_variable"]),
+("remove the last operand", ["remove_last_variable"]),
+("delete the last operand", ["remove_last_variable"]),
+
+# Arithmetic contexts
+("remove the last variable from revenue plus profit", ["remove_last_variable"]),
+("delete the last variable from revenue minus cost", ["remove_last_variable"]),
+("remove the last variable from sales multiplied by margin", ["remove_last_variable"]),
+("remove the last variable from revenue divided by tax", ["remove_last_variable"]),
+
+# Column builder combinations
+("open column builder and remove the last variable",
+ ["open_column_builder","remove_last_variable"]),
+
+("open column builder and delete the last variable",
+ ["open_column_builder","remove_last_variable"]),
+
+# Formula column combinations
+("add a formula column and remove the last variable",
+ ["add_formula_column","remove_last_variable"]),
+
+("create a calculated column then remove the last variable",
+ ["add_formula_column","remove_last_variable"]),
+
+# Workflow examples
+("upload file and remove the last variable from the formula",
+ ["upload_file","remove_last_variable"]),
+
+("open column builder and remove the variable I just added",
+ ["open_column_builder","remove_last_variable"]),
+
+("create a formula column and delete the last variable",
+ ["add_formula_column","remove_last_variable"]),
+
+# Short UI commands
+("remove last variable", ["remove_last_variable"]),
+("delete last variable", ["remove_last_variable"]),
+("undo last variable", ["remove_last_variable"]),
+("remove last column", ["remove_last_variable"]),
+("delete last column from formula", ["remove_last_variable"]),
+("remove only the last variable not the whole formula", ["remove_last_variable"]),
+("delete the last variable but keep the formula", ["remove_last_variable"]),
+
+
+("submit the column", ["submit_column"]),
+("submit this column", ["submit_column"]),
+("submit the formula column", ["submit_column"]),
+("submit the new column", ["submit_column"]),
+("submit the calculated column", ["submit_column"]),
+
+("save the column", ["submit_column"]),
+("save this column", ["submit_column"]),
+("save the new column", ["submit_column"]),
+("save the formula column", ["submit_column"]),
+("save the calculated column", ["submit_column"]),
+
+("apply the column", ["submit_column"]),
+("apply this column", ["submit_column"]),
+("apply the formula column", ["submit_column"]),
+("apply the new column", ["submit_column"]),
+
+("finish creating the column", ["submit_column"]),
+("finish the column", ["submit_column"]),
+("complete the column", ["submit_column"]),
+("complete the formula column", ["submit_column"]),
+("complete column creation", ["submit_column"]),
+
+("confirm the column", ["submit_column"]),
+("confirm this column", ["submit_column"]),
+("confirm the formula column", ["submit_column"]),
+
+("add the column", ["submit_column"]),
+("add this column to the sheet", ["submit_column"]),
+("add the formula column to the sheet", ["submit_column"]),
+("insert the column", ["submit_column"]),
+
+("finalize the column", ["submit_column"]),
+("finalize the formula column", ["submit_column"]),
+("finalize this column", ["submit_column"]),
+
+("done creating the column", ["submit_column"]),
+("done with the column", ["submit_column"]),
+("done with this column", ["submit_column"]),
+
+("submit column now", ["submit_column"]),
+("save and submit the column", ["submit_column"]),
+("submit the column to the sheet", ["submit_column"]),
+("submit the column builder result", ["submit_column"]),
+
+("create the column and submit it", ["add_formula_column","submit_column"]),
+("open column builder and submit the column", ["open_column_builder","submit_column"]),
+("finish the formula and submit the column", ["submit_column"]),
+
+
+("submit the sheet", ["submit_sheet"]),
+("submit this sheet", ["submit_sheet"]),
+("submit the new sheet", ["submit_sheet"]),
+("submit my sheet", ["submit_sheet"]),
+
+("save the sheet", ["submit_sheet"]),
+("save this sheet", ["submit_sheet"]),
+("save the new sheet", ["submit_sheet"]),
+("save my sheet", ["submit_sheet"]),
+
+("apply the sheet", ["submit_sheet"]),
+("apply this sheet", ["submit_sheet"]),
+("apply the new sheet", ["submit_sheet"]),
+
+("finish creating the sheet", ["submit_sheet"]),
+("finish the sheet", ["submit_sheet"]),
+("complete the sheet", ["submit_sheet"]),
+("complete sheet creation", ["submit_sheet"]),
+
+("confirm the sheet", ["submit_sheet"]),
+("confirm this sheet", ["submit_sheet"]),
+("confirm the new sheet", ["submit_sheet"]),
+
+("finalize the sheet", ["submit_sheet"]),
+("finalize this sheet", ["submit_sheet"]),
+("finalize the new sheet", ["submit_sheet"]),
+
+("generate the sheet", ["submit_sheet"]),
+("generate this sheet", ["submit_sheet"]),
+("generate the final sheet", ["submit_sheet"]),
+
+("done creating the sheet", ["submit_sheet"]),
+("done with the sheet", ["submit_sheet"]),
+("done with this sheet", ["submit_sheet"]),
+
+("submit sheet now", ["submit_sheet"]),
+("submit the sheet to dashboard", ["submit_sheet"]),
+("submit the sheet to the workspace", ["submit_sheet"]),
+
+("create the sheet and submit it", ["create_new_sheet","submit_sheet"]),
+("finish configuring the sheet and submit it", ["submit_sheet"]),
+("complete the dashboard and submit the sheet", ["submit_sheet"]),
+
+("submit the sheet after setting axes", ["set_x_axis","set_y_axis","submit_sheet"]),
+("submit the sheet after creating columns", ["submit_column","submit_sheet"]),
+("submit the sheet once everything is ready", ["submit_sheet"]),
+("submit the sheet not the column", ["submit_sheet"]),
+("save the whole sheet", ["submit_sheet"]),
+("finish and submit the entire sheet", ["submit_sheet"]),
+("submit the completed sheet", ["submit_sheet"]),
+("submit the final sheet", ["submit_sheet"]),
+
+("go to results", ["go_to_results"]),
+("open results", ["go_to_results"]),
+("show results", ["go_to_results"]),
+("view results", ["go_to_results"]),
+("take me to the results", ["go_to_results"]),
+
+("navigate to results", ["go_to_results"]),
+("navigate to the results page", ["go_to_results"]),
+("go to the results page", ["go_to_results"]),
+("open the results page", ["go_to_results"]),
+("show the results page", ["go_to_results"]),
+
+("view the results", ["go_to_results"]),
+("display the results", ["go_to_results"]),
+("show me the results", ["go_to_results"]),
+("let me see the results", ["go_to_results"]),
+("can I see the results", ["go_to_results"]),
+
+("go to output", ["go_to_results"]),
+("open output page", ["go_to_results"]),
+("show the output", ["go_to_results"]),
+("view the output", ["go_to_results"]),
+
+("open the results dashboard", ["go_to_results"]),
+("go to the results dashboard", ["go_to_results"]),
+("show the results dashboard", ["go_to_results"]),
+("view the results dashboard", ["go_to_results"]),
+
+("take me to the dashboard results", ["go_to_results"]),
+("navigate to dashboard results", ["go_to_results"]),
+
+("after submitting the sheet go to results", ["submit_sheet","go_to_results"]),
+("submit sheet and go to results", ["submit_sheet","go_to_results"]),
+("once finished open results", ["go_to_results"]),
+("finish and show results", ["go_to_results"]),
+
+("show me the final results", ["go_to_results"]),
+("open the final results page", ["go_to_results"]),
+("view the final results", ["go_to_results"]),
+("display final results", ["go_to_results"]),
+("the sheet is done now go to results", ["go_to_results"]),
+("stop editing and show results", ["go_to_results"]),
+("switch to results view", ["go_to_results"]),
+("move to results page", ["go_to_results"]),
+# =====================================================
+# MORE PLUS INTENT DATA
+# =====================================================
+
+("revenue plus profit", ["plus"]),
+("sales plus tax", ["plus"]),
+("profit plus margin", ["plus"]),
+("earnings plus bonus", ["plus"]),
+("income plus interest", ["plus"]),
+("growth plus revenue", ["plus"]),
+("cost plus tax", ["plus"]),
+("revenue plus expenses", ["plus"]),
+("sales plus revenue", ["plus"]),
+("profit plus earnings", ["plus"]),
+
+("add revenue plus profit", ["plus"]),
+("add sales plus tax", ["plus"]),
+("add profit plus margin", ["plus"]),
+("add earnings plus bonus", ["plus"]),
+("add income plus interest", ["plus"]),
+("add growth plus revenue", ["plus"]),
+("add cost plus tax", ["plus"]),
+("add revenue plus expenses", ["plus"]),
+("add sales plus revenue", ["plus"]),
+("add profit plus earnings", ["plus"]),
+
+("calculate revenue plus profit", ["plus"]),
+("calculate sales plus tax", ["plus"]),
+("calculate profit plus margin", ["plus"]),
+("calculate earnings plus bonus", ["plus"]),
+("calculate income plus interest", ["plus"]),
+
+("sum revenue plus profit", ["plus"]),
+("sum sales plus tax", ["plus"]),
+("sum profit plus margin", ["plus"]),
+("sum earnings plus bonus", ["plus"]),
+("sum income plus interest", ["plus"]),
+
+("total revenue plus profit", ["plus"]),
+("total sales plus tax", ["plus"]),
+("total profit plus margin", ["plus"]),
+("total earnings plus bonus", ["plus"]),
+
+("revenue + profit", ["plus"]),
+("sales + tax", ["plus"]),
+("profit + margin", ["plus"]),
+("earnings + bonus", ["plus"]),
+("income + interest", ["plus"]),
+
+("add column revenue plus column profit", ["plus"]),
+("add column sales plus column tax", ["plus"]),
+("add column profit plus column margin", ["plus"]),
+
+("compute revenue plus profit", ["plus"]),
+("compute sales plus tax", ["plus"]),
+("compute profit plus margin", ["plus"]),
+
+("add revenue and profit together", ["plus"]),
+("add sales and tax together", ["plus"]),
+("add profit and margin together", ["plus"]),
+# =====================================================
+# EVEN MORE PLUS INTENT DATA
+# =====================================================
+
+# --- Natural addition phrases ---
+("combine revenue and profit", ["plus"]),
+("combine sales and tax", ["plus"]),
+("combine profit and margin", ["plus"]),
+("combine earnings and bonus", ["plus"]),
+("combine income and interest", ["plus"]),
+
+("merge revenue and profit values", ["plus"]),
+("merge sales and tax values", ["plus"]),
+("merge profit and margin values", ["plus"]),
+
+("join revenue and profit together", ["plus"]),
+("join sales and tax together", ["plus"]),
+("join profit and margin together", ["plus"]),
+
+# --- Spreadsheet style ---
+("add the revenue column to the profit column", ["plus"]),
+("add the sales column to the tax column", ["plus"]),
+("add the profit column to the margin column", ["plus"]),
+("sum the revenue and profit columns", ["plus"]),
+("sum the sales and tax columns", ["plus"]),
+("sum the profit and margin columns", ["plus"]),
+
+# --- Formula style ---
+("create revenue plus profit formula", ["plus"]),
+("create sales plus tax formula", ["plus"]),
+("create profit plus margin formula", ["plus"]),
+("build revenue plus profit calculation", ["plus"]),
+("build sales plus tax calculation", ["plus"]),
+
+# --- Analytical phrasing ---
+("calculate total revenue and profit", ["plus"]),
+("calculate total sales and tax", ["plus"]),
+("calculate total profit and margin", ["plus"]),
+("calculate combined revenue and profit", ["plus"]),
+("calculate combined sales and tax", ["plus"]),
+
+# --- Business phrasing ---
+("revenue combined with profit", ["plus"]),
+("sales combined with tax", ["plus"]),
+("profit combined with margin", ["plus"]),
+("earnings combined with bonus", ["plus"]),
+
+# --- Data analysis style ---
+("aggregate revenue and profit", ["plus"]),
+("aggregate sales and tax", ["plus"]),
+("aggregate profit and margin", ["plus"]),
+
+("add up revenue and profit", ["plus"]),
+("add up sales and tax", ["plus"]),
+("add up profit and margin", ["plus"]),
+
+# --- Instruction style ---
+("please add revenue and profit", ["plus"]),
+("please add sales and tax", ["plus"]),
+("please add profit and margin", ["plus"]),
+
+("take revenue and add profit", ["plus"]),
+("take sales and add tax", ["plus"]),
+("take profit and add margin", ["plus"]),
+
+# --- Builder phrasing ---
+("add revenue and profit inside the formula", ["plus"]),
+("add sales and tax inside the formula", ["plus"]),
+("add profit and margin inside the formula", ["plus"]),
+
+("insert revenue plus profit in the formula", ["plus"]),
+("insert sales plus tax in the formula", ["plus"]),
+
+# --- Column builder combinations ---
+("open column builder and add revenue plus profit",
+ ["open_column_builder","plus"]),
+
+("open column builder and compute sales plus tax",
+ ["open_column_builder","plus"]),
+
+# --- Formula column combinations ---
+("create a formula column using revenue plus profit",
+ ["add_formula_column","plus"]),
+
+("add a calculated column where sales plus tax",
+ ["add_formula_column","plus"]),
+
+("build a formula column using profit plus margin",
+ ["add_formula_column","plus"]),
+
+# --- Multi intent combinations ---
+("rename the column and calculate revenue plus profit",
+ ["set_new_column_name","plus"]),
+
+("rename the column and compute sales plus tax",
+ ["set_new_column_name","plus"]),
+
+# --- Full workflow examples ---
+("upload the file create a sheet called revenue summary add a formula column with revenue plus profit rename the column total revenue set month as x axis and profit as y axis and open column builder",
+ ["upload_file","create_new_sheet","name_new_sheet","add_formula_column","plus","set_new_column_name","set_x_axis","set_y_axis","open_column_builder"]),
+
+("import dataset create a new sheet called sales summary calculate sales plus tax rename the column total sales set quarter as x axis set growth as y axis and open column builder",
+ ["upload_file","create_new_sheet","name_new_sheet","plus","set_new_column_name","set_x_axis","set_y_axis","open_column_builder"]),
+ # =====================================================
+# PLUS INTENT - ADDITION OPERATOR
+# =====================================================
+
+("add these two values", ["plus"]),
+("add the numbers together", ["plus"]),
+("add these fields", ["plus"]),
+("add both columns", ["plus"]),
+("add the two columns", ["plus"]),
+
+("sum these values", ["plus"]),
+("sum the columns", ["plus"]),
+("sum these two numbers", ["plus"]),
+("sum the two variables", ["plus"]),
+("sum the selected fields", ["plus"]),
+
+("combine these values", ["plus"]),
+("combine the two columns", ["plus"]),
+("combine the variables", ["plus"]),
+("combine both numbers", ["plus"]),
+("combine the selected fields", ["plus"]),
+
+("total these values", ["plus"]),
+("total the two numbers", ["plus"]),
+("total the columns", ["plus"]),
+("calculate the total", ["plus"]),
+("calculate the sum", ["plus"]),
+
+("add revenue and profit", ["plus"]),
+("add sales and tax", ["plus"]),
+("add income and bonus", ["plus"]),
+("add cost and margin", ["plus"]),
+("add price and fee", ["plus"]),
+
+("revenue plus profit", ["plus"]),
+("sales plus tax", ["plus"]),
+("income plus bonus", ["plus"]),
+("cost plus margin", ["plus"]),
+("price plus fee", ["plus"]),
+
+("revenue + profit", ["plus"]),
+("sales + tax", ["plus"]),
+("income + bonus", ["plus"]),
+("cost + margin", ["plus"]),
+("price + fee", ["plus"]),
+
+("add the revenue column with profit", ["plus"]),
+("add the sales column with tax", ["plus"]),
+("add income with bonus", ["plus"]),
+("add cost with margin", ["plus"]),
+("add price with fee", ["plus"]),
+
+("include revenue and profit in the total", ["plus"]),
+("include sales and tax in the total", ["plus"]),
+("include income and bonus together", ["plus"]),
+
+("perform addition", ["plus"]),
+("do addition", ["plus"]),
+("use addition", ["plus"]),
+("apply addition", ["plus"]),
+
+("insert a plus operator", ["plus"]),
+("use the plus operator", ["plus"]),
+("place a plus sign", ["plus"]),
+("add a plus symbol", ["plus"]),
+("put a plus between the variables", ["plus"]),
+
+("add the selected variables", ["plus"]),
+("add the chosen fields", ["plus"]),
+("add these inputs", ["plus"]),
+("add the selected columns together", ["plus"]),
+
+("calculate revenue plus profit", ["plus"]),
+("calculate sales plus tax", ["plus"]),
+("calculate income plus bonus", ["plus"]),
+("calculate cost plus margin", ["plus"]),
+("calculate price plus fee", ["plus"]),
+# =====================================================
+# MINUS INTENT - SUBTRACTION OPERATOR
+# =====================================================
+
+("subtract these values", ["minus"]),
+("subtract the numbers", ["minus"]),
+("subtract these fields", ["minus"]),
+("subtract the columns", ["minus"]),
+("subtract the two values", ["minus"]),
+
+("deduct this value", ["minus"]),
+("deduct the cost", ["minus"]),
+("deduct tax from revenue", ["minus"]),
+("deduct the fee", ["minus"]),
+("deduct the expense", ["minus"]),
+
+("remove this value from the total", ["minus"]),
+("remove the cost from revenue", ["minus"]),
+("remove tax from sales", ["minus"]),
+("remove the fee from the price", ["minus"]),
+("remove the expense from income", ["minus"]),
+
+("calculate the difference", ["minus"]),
+("calculate the difference between values", ["minus"]),
+("find the difference between numbers", ["minus"]),
+("compute the difference", ["minus"]),
+("get the difference between the columns", ["minus"]),
+
+("revenue minus cost", ["minus"]),
+("sales minus tax", ["minus"]),
+("income minus expenses", ["minus"]),
+("profit minus loss", ["minus"]),
+("price minus discount", ["minus"]),
+
+("revenue - cost", ["minus"]),
+("sales - tax", ["minus"]),
+("income - expenses", ["minus"]),
+("profit - loss", ["minus"]),
+("price - discount", ["minus"]),
+
+("subtract cost from revenue", ["minus"]),
+("subtract tax from sales", ["minus"]),
+("subtract expenses from income", ["minus"]),
+("subtract discount from price", ["minus"]),
+
+("less tax", ["minus"]),
+("less cost", ["minus"]),
+("less expenses", ["minus"]),
+("less discount", ["minus"]),
+
+("apply subtraction", ["minus"]),
+("perform subtraction", ["minus"]),
+("use subtraction", ["minus"]),
+("do subtraction", ["minus"]),
+
+("insert a minus operator", ["minus"]),
+("use the minus operator", ["minus"]),
+("place a minus sign", ["minus"]),
+("add a minus symbol", ["minus"]),
+("put a minus between the variables", ["minus"]),
+
+("subtract the selected values", ["minus"]),
+("subtract the selected columns", ["minus"]),
+("subtract the selected variables", ["minus"]),
+
+("calculate revenue minus cost", ["minus"]),
+("calculate sales minus tax", ["minus"]),
+("calculate income minus expenses", ["minus"]),
+("calculate profit minus loss", ["minus"]),
+("calculate price minus discount", ["minus"])
+
 ]
+
+
 
 
 
