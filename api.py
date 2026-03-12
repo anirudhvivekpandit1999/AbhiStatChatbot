@@ -69,8 +69,8 @@ def predict_intent():
 
     results = []
     for i, p in enumerate(probs):
-        
-        results.append({
+        if float(p) > 0.1:
+            results.append({
                 "intent": idx_to_intent[i],
                 "confidence": round(float(p), 4)
             })
